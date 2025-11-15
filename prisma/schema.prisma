@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    login     String   @unique
+    role      UserRole @default(USER)
+    telegram  String
+    firstName String
+    lastName  String
+    phone     String
+    status    Boolean  @default(true)
+    password  String
+    salt      String?
+
+    balance Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    //Связи
+
+    peers            WireguardPeer[]
+    transactions     Transaction[]
+    userSubscription UserSubscription?
+}
+
+model WireguardPeer {
+    id Int @id @default(autoincrement())
+
+    userId Int
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    peerName   String
+    publicKey  String
+    privateKey String
+    address    String
+    status     WgPeerStatus @default(ACTIVE)
+    isEnabled  Boolean      @default(true) //для того чтобы при пополнении баланса включать только те конфиги, 
+    //которые были включены до их деактивации по причине отрицательного баланса
+
+    lastActivity DateTime?
+    createdAt    DateTime  @default(now())
+}
+
+model Transaction {
+    id Int @id @default(autoincrement())
+
+    userId Int
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    status OrderStatus @default(PENDING)
+
+    type        TransactionType
+    amount      Int
+    description String
+
+    createdAt DateTime @default(now())
+    paymentId String?
+
+    paymentUrl String?
+}
+
+model SubscriptionPlan {
+    id          Int      @id @default(autoincrement())
+    name        String
+    label       String
+    dailyPrice  Int
+    maxPeers    Int
+    description String
+    createdAt   DateTime @default(now())
+
+    userSubscriptions UserSubscription[]
+}
+
+model UserSubscription {
+    id      Int       @id @default(autoincrement())
+    status  Boolean   @default(true)
+    endDate DateTime?
+
+    userId             Int              @unique
+    subscriptionPlanId Int
+    user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    subscriptionPlan   SubscriptionPlan @relation(fields: [subscriptionPlanId], references: [id])
+}
+
+enum UserRole {
+    USER
+    ADMIN
+}
+
+enum WgPeerStatus {
+    ACTIVE
+    INACTIVE
+}
+
+enum TransactionType {
+    TOP_UP
+    CHARGE
+}
+
+enum OrderStatus {
+    PENDING
+    SUCCEEDED
+    CANCELED
+}
