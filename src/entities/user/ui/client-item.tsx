@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { UserDTO } from '../model/types';
 import { PeersStats } from '@/entities/wg-peer';
 import { ChangeUserStatus, DeleteUser } from '@/features/user';
+import { ResetPasswordModal } from '@/features/user/ui/reset-password-modal';
 
 interface Props {
   className?: string;
@@ -57,6 +58,7 @@ export const ClientItem: React.FC<Props> = ({ user, stats, isLoading }) => {
 
             <div className='flex items-center gap-4'>
               <DeleteUser userId={user.id} userName={`${user.lastName} ${user.firstName}`} />
+              <ResetPasswordModal id={user.id} />
             </div>
           </div>
         </div>

@@ -63,6 +63,18 @@ export const userRepository = {
     });
   },
 
+  //для смены пароля
+  async findUserByIdWithPassword(userId: number) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        password: true,
+        salt: true,
+      },
+    });
+  },
+
   async updateUserById(userId: number, data: object) {
     return prisma.user.update({
       where: { id: userId },
@@ -90,6 +102,16 @@ export const userRepository = {
       },
       data: {
         balance: { increment: amount },
+      },
+    });
+  },
+
+  async updatePassword(userId: number, hashedPassword: string, salt: string) {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        salt,
       },
     });
   },

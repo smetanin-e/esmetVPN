@@ -5,6 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { Textarea } from '../ui';
 import { CleareButton } from '../cleare-button';
 import { ErrorText } from '../error-text';
+import { cn } from '@/shared/lib';
 
 interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   className?: string;
@@ -29,7 +30,7 @@ export const FormTextarea: React.FC<Props> = ({ className, name, label, required
   };
 
   return (
-    <div className={className}>
+    <div className={cn('relative', className)}>
       <p className='font-medium mb-1 text-sm'>
         {label} {required && <span className='text-red-500'>*</span>}
       </p>
