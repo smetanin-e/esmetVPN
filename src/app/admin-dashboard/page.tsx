@@ -16,7 +16,12 @@ export default async function AdminDashboardPage() {
   return (
     <div className=' min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900'>
       <div className='container mx-auto py-4 px-2'>
-        <Header title='Админ-панель' name={`${user.lastName} ${user.firstName}`} role={user.role} />
+        <Header
+          title='Админ-панель'
+          name={`${user.lastName} ${user.firstName}`}
+          role={user.role}
+          userId={user.id}
+        />
         <div className='space-y-8'>
           <SubscriptionPlans />
           <div className=' lg:grid lg:grid-cols-[1fr_370px] lg:gap-6'>

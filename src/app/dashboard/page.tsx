@@ -17,6 +17,7 @@ export default async function DashboardPage() {
     <div className=' min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900'>
       <div className='container mx-auto py-4 px-2'>
         <Header
+          userId={user.id}
           title='Личный кабинет'
           name={`${user.lastName} ${user.firstName}`}
           role={user.role}
