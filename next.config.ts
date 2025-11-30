@@ -2,9 +2,10 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  // Отключаем Turbopack для стабильности
   experimental: {
-    turbo: undefined,
+    serverActions: {
+      allowedOrigins: ['vpn.esmet.store', 'localhost:3001'],
+    },
   },
 };
 
