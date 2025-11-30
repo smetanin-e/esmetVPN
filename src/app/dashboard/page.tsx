@@ -7,6 +7,7 @@ import { getUserSession } from '@/features/user/actions/get-user-session';
 import { ClientSubscriptionCard } from '@/widgets/clients/client-subscription-card';
 import { Peers } from '@/widgets/peers/peers';
 import { Transactions } from '@/widgets/transactions/transactions';
+import Link from 'next/link';
 
 export default async function DashboardPage() {
   const user = await getUserSession();
@@ -14,8 +15,8 @@ export default async function DashboardPage() {
   if (user.role === UserRole.ADMIN) return redirect('/admin-dashboard');
 
   return (
-    <div className=' min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900'>
-      <div className='container mx-auto py-4 px-2'>
+    <div className='flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900'>
+      <div className='container mx-auto py-4 px-2 grow-1'>
         <Header
           userId={user.id}
           title='Личный кабинет'
@@ -49,6 +50,12 @@ export default async function DashboardPage() {
             <Transactions className=' md:col-start-1 md:row-start-2 ' />
           )}
         </div>
+      </div>
+      <div className='text-center py-2 text-sm opacity-65'>
+        &copy; 2025 esmetVPN.{' '}
+        <Link href={'/license'} className='underline'>
+          Пользовательское соглашение.
+        </Link>
       </div>
     </div>
   );

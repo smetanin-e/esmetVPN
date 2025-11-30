@@ -21,7 +21,7 @@ export const subscriptionPlanRepository = {
     return prisma.subscriptionPlan.create({
       data: {
         name: formData.name,
-        label: formData.label.toUpperCase(),
+        label: formData.strategy.toUpperCase(),
         dailyPrice: Number(formData.dailyPrice),
         maxPeers: Number(formData.maxPeers),
         description: formData.description,

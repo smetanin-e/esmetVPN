@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { LoginFormType, loginSchema } from '../model/schemas/login-schema';
+import Link from 'next/link';
 
 interface Props {
   className?: string;
@@ -64,7 +65,14 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
           required
         />
 
-        <Button disabled={form.formState.isSubmitting} className='w-full mt-6' type='submit'>
+        <div className='text-gray-400 text-sm'>
+          <p>Входя в аккаунт вы подтверждаете условия </p>
+          <Link href={'/license'} className='underline'>
+            пользовательского соглашения.
+          </Link>
+        </div>
+
+        <Button disabled={form.formState.isSubmitting} className='w-full mt-0' type='submit'>
           Войти
         </Button>
       </form>
