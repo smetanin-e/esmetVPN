@@ -7,7 +7,6 @@ import { getUserSession } from '@/features/user/actions/get-user-session';
 import { ClientSubscriptionCard } from '@/widgets/clients/client-subscription-card';
 import { Peers } from '@/widgets/peers/peers';
 import { Transactions } from '@/widgets/transactions/transactions';
-import Link from 'next/link';
 
 export default async function DashboardPage() {
   const user = await getUserSession();
@@ -50,12 +49,6 @@ export default async function DashboardPage() {
             <Transactions className=' md:col-start-1 md:row-start-2 ' />
           )}
         </div>
-      </div>
-      <div className='text-center py-2 text-sm opacity-65'>
-        &copy; 2025 esmetVPN.{' '}
-        <Link href={'/license'} className='underline'>
-          Пользовательское соглашение.
-        </Link>
       </div>
     </div>
   );
