@@ -10,13 +10,13 @@ echo "📥 Pulling latest code..."
 git pull
 
 echo "🔧 Building Docker images..."
-docker compose --env-file .env.production build
+docker compose --env-file .env build
 
 echo "🛑 Stopping old containers..."
-docker compose --env-file .env.production down
+docker compose --env-file .env down
 
 echo "🌟 Starting new containers..."
-docker compose --env-file .env.production up -d
+docker compose --env-file .env up -d
 
 echo "----------------------------------------"
 echo "✅ Deploy complete!"
