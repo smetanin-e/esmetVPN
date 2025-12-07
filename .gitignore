@@ -44,6 +44,3 @@ next-env.d.ts
 
 
 .gitlab-ci.yml
-Docker
-docker/
-Dockerfile

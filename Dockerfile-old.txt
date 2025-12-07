@@ -1,0 +1,89 @@
+# Многостадийная сборка для оптимизации размера
+FROM node:18-alpine AS base
+
+# Стадия установки зависимостей
+WORKDIR /app
+FROM base AS deps
+
+
+# Копируем файлы зависимостей
+COPY package.json package-lock.json* ./
+
+# Устанавливаем все зависимости один раз
+RUN npm ci --no-audit --prefer-offline
+
+# Копируем схему Prisma и генерируем клиент
+COPY prisma ./prisma
+
+# Передаем DATABASE_URL через ARG и ENV для Prisma
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Генерируем Prisma client
+RUN npx prisma generate
+
+# Стадия сборки
+FROM base AS builder
+WORKDIR /app
+
+
+# Копируем зависимости И сгенерированный Prisma клиент из предыдущей стадии
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
+
+# Копируем исходный код
+COPY . .
+
+# Устанавливаем переменные окружения для билда
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
+
+# Передаем переменные окружения для Next.js
+
+ARG API_URL_SERVER
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_READ_KEY
+ARG API_READ_KEY
+ARG DATABASE_URL
+
+ENV API_URL_SERVER=$API_URL_SERVER
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_READ_KEY=$NEXT_PUBLIC_API_READ_KEY
+ENV API_READ_KEY=$API_READ_KEY
+ENV DATABASE_URL=$DATABASE_URL
+
+# Собираем приложение
+RUN npm run build
+
+# Финальная стадия
+FROM base AS runner
+WORKDIR /app
+
+# Создаем непривилегированного пользователя для безопасности
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Копируем package.json
+COPY package.json ./
+
+# Копируем собранное приложение из стадии builder
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Переключаемся на непривилегированного пользователя
+USER nextjs
+
+# Экспонируем порт
+EXPOSE 3000
+
+# Переменные окружения
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+ENV NODE_ENV production
+
+# Запускаем приложение
+CMD ["npm", "start"]

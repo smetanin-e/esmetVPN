@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+echo "----------------------------------------"
+echo "🚀 Starting deploy..."
+echo "----------------------------------------"
+
+
+echo "📥 Pulling latest code..."
+git pull
+
+echo "🔧 Building Docker images..."
+docker compose --env-file .env.production build
+
+echo "🛑 Stopping old containers..."
+docker compose --env-file .env.production down
+
+echo "🌟 Starting new containers..."
+docker compose --env-file .env.production up -d
+
+echo "----------------------------------------"
+echo "✅ Deploy complete!"
+echo "----------------------------------------"

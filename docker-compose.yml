@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  next_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        API_URL_SERVER: ${API_URL_SERVER}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_API_READ_KEY: ${NEXT_PUBLIC_API_READ_KEY}
+        API_READ_KEY: ${API_READ_KEY}
+        DATABASE_URL: ${DATABASE_URL}
+    container_name: next_app
+    restart: always
+    ports:
+      - '3001:3000' # наружу -> внутрь
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_URL_SERVER: ${API_URL_SERVER}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_API_READ_KEY: ${NEXT_PUBLIC_API_READ_KEY}
+      API_READ_KEY: ${API_READ_KEY}
+      DATABASE_URL: ${DATABASE_URL}
