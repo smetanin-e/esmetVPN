@@ -8,10 +8,6 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --prefer-offline
 
-# Копируем Prisma схемы и генерируем клиент уже здесь
-COPY prisma ./prisma
-RUN npx prisma generate
-
 # ---- Builder ----
 FROM base AS builder
 
@@ -32,10 +28,11 @@ COPY package.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
-# ВАЖНО — Копируем node_modules уже с готовым Prisma Client
+# Копируем node_modules. Теперь они не включают Prisma Client,
+# что правильно, так как он будет сгенерирован ниже.
 COPY --from=deps /app/node_modules ./node_modules
 
-# Копируем Prisma схему (не обязательно)
+# Копируем Prisma схему (Обязательно для генерации!)
 COPY prisma ./prisma
 
 USER nextjs
@@ -43,4 +40,6 @@ USER nextjs
 EXPOSE 3000
 ENV NODE_ENV=production
 
-CMD ["npm", "start"]
+# 👇 КЛЮЧЕВАЯ ИСПРАВЛЕННАЯ ЧАСТЬ
+# Генерируем Prisma Client ПЕРЕД запуском приложения.
+CMD npx prisma generate && npm start
