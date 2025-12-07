@@ -6,9 +6,6 @@ echo "🚀 Starting deploy..."
 echo "----------------------------------------"
 
 
-echo "📥 Pulling latest code..."
-git pull
-
 echo "🔧 Building Docker images..."
 docker compose --env-file .env build
 
