@@ -65,13 +65,6 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
           required
         />
 
-        <div className='text-gray-400 text-sm'>
-          <p>Входя в аккаунт вы подтверждаете условия </p>
-          <Link href={'/license'} className='underline'>
-            пользовательского соглашения.
-          </Link>
-        </div>
-
         <Button disabled={form.formState.isSubmitting} className='w-full mt-0' type='submit'>
           Войти
         </Button>

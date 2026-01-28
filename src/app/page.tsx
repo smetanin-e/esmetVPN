@@ -33,10 +33,6 @@ export default async function Home() {
           }
         />
       </div>
-
-      <footer className='py-2 text-center text-gray-400 text-sm'>
-        &copy; 2025 esmetVPN. Все права защищены.{' '}
-      </footer>
     </div>
   );
 }
